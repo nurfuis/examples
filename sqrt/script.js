@@ -19,8 +19,10 @@ function handleInput() {
   if (!isNaN(parsedValue)) {
     const result = calculateSquareRoot(parsedValue);
     output += "\nThe answer is:" + result;
+
   } else {
     output += "\nInvalid input: Please enter a number.";
+    
   }
 
   outputBox.textContent = output;
