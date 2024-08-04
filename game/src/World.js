@@ -3,12 +3,19 @@ import { GameObject } from "./GameObject.js";
 import { Vector2 } from "./Vector2.js";
 import { randomInt } from "./utils/randomInt.js";
 
+import { Burrow } from "./features/Burrow.js";
+import { Flower } from "./features/Flower.js";
+import { Granary } from "./features/Granary.js";
+import { Perch } from "./features/Perch.js";
+import { Sapling } from "./features/Sapling.js";
+import { Shrub } from "./features/Shrub.js";
+import { Tree } from "./features/Tree.js";
 
 const TERRAIN_TYPES = [
   { grass: { color: "lightgreen" } },
   { water: { color: "lightblue" } }, 
   { hills: { color: "gold" } }, 
-  { mountains: { color: "#ccc" } },
+  { mountains: { color: "brown" } },
   { forest: { color: "forestgreen" } },
   { swamp: { color: "#666" } },
 ];
@@ -54,6 +61,173 @@ export class World extends GameObject {
     this.color = "rgba(255, 255, 255, 0.8)";
     this.border = 0;
   }
+  randomizePerch() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "grass" ||
+        tile.type == "swamp"
+      ) {
+        const random = randomInt(0, 7);
+        if (random === 0) {
+          const perch = new Perch();
+          perch.position.x = tile.position.x + tile.width / 8;
+          perch.position.y =
+            tile.position.y + tile.height / 2 + tile.height / 4;
+          tile.addChild(perch);
+          tile.highPoint = perch;
+        }
+      }
+    }
+  }
+
+  randomizeSaplings() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "swamp"
+      ) {
+        const random = randomInt(0, 2);
+
+        if (random === 0 || random === 1) {
+          const random = randomInt(1, 4);
+          const width = tile.width;
+          const height = tile.height;
+
+          const circleOffsets = [
+            { x: -width / 2 + width / 5, y: 0 },
+            { x: -width / 10, y: -height / 2 + height / 6 },
+            { x: width / 2 - width / 3, y: 0 },
+            { x: -width / 10, y: height / 2 - height / 3.5 },
+          ];
+
+          tile.newGrowth = [];
+
+          for (let i = 0; i < random; i++) {
+            const offset = circleOffsets[i]; // Access current offset based on loop counter
+            const sapling = new Sapling();
+            sapling.position.x = tile.position.x + tile.width / 2 + offset.x;
+            sapling.position.y = tile.position.y + tile.height / 2 + offset.y;
+            sapling.density = random;
+            tile.addChild(sapling);
+            tile.newGrowth.push(sapling);
+          }
+        }
+      }
+    }
+  }
+
+  randomizeBurrows() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "grass" ||
+        tile.type == "swamp"
+      ) {
+        const random = randomInt(0, 2);
+        if (random === 0 || random === 1) {
+          const burrow = new Burrow();
+          burrow.position.x = tile.position.x + tile.width / 2 + tile.width / 4;
+          burrow.position.y =
+            tile.position.y + tile.height / 2 + tile.height / 4;
+          tile.addChild(burrow);
+          tile.subTerrain = burrow;
+        }
+      }
+    }
+  }
+
+  randomizeFlowers() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "grass" ||
+        tile.type == "swamp"
+      ) {
+        const random = randomInt(0, 2);
+        if (random === 0 || random === 1) {
+          const random = randomInt(1, 3);
+          const flower = new Flower();
+          flower.position.x = tile.position.x + tile.width / 2 + tile.width / 4;
+          flower.position.y =
+            tile.position.y + tile.height / 4 + flower.height / 2;
+          flower.density = random;
+          tile.addChild(flower);
+          tile.flora = flower;
+        }
+      }
+    }
+  }
+  randomizeShrubs() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "grass" ||
+        tile.type == "swamp"
+      ) {
+        const random = randomInt(0, 2);
+        if (random === 0 || random === 1) {
+          const random = randomInt(1, 3);
+          const shrub = new Shrub();
+          shrub.position.x = tile.position.x + tile.width / 2 + tile.width / 4;
+          shrub.position.y = tile.position.y + shrub.height;
+          shrub.density = random;
+          tile.addChild(shrub);
+          tile.understory = shrub;
+        }
+      }
+    }
+  }
+  randomizeTrees() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills" ||
+        tile.type == "grass"
+      ) {
+        const random = randomInt(0, 3);
+        if (random === 0) {
+          const tree = new Tree();
+          tree.position.x = tile.position.x + tile.width / 2 - tree.radius;
+          tree.position.y = tile.position.y + tile.height / 2 - tree.radius;
+          tile.addChild(tree);
+          tile.vegetation = tree;
+        }
+      }
+    }
+  }
+  randomizeGranaries() {
+    for (const tile of this.children) {
+      if (
+        tile.type == "forest" ||
+        tile.type == "mountains" ||
+        tile.type == "hills"
+      ) {
+        const random = randomInt(0, 5);
+        if (random === 0) {
+          const granary = new Granary();
+          granary.position.x = tile.position.x + tile.width / 8;
+          granary.position.y = tile.position.y + tile.height / 8;
+          tile.addChild(granary);
+          tile.feature = granary;
+        }
+      }
+    }
+  }
+
+
+
   adjustSwampTiles() {
     for (const tile of this.children) {
       let waterLevel = 0;
@@ -180,6 +354,15 @@ export class World extends GameObject {
 
     this.adjustWaterTiles();
     this.adjustSwampTiles();
+
+
+    this.randomizeTrees();
+    this.randomizeShrubs();
+    this.randomizeFlowers();
+    this.randomizeBurrows();
+    this.randomizePerch();
+    this.randomizeSaplings();
+    this.randomizeGranaries();
 
   }
 
