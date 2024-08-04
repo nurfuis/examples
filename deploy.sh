@@ -4,7 +4,7 @@
 html_dir="/var/www/sim/public_html"
 
 # Loop through directories to copy
-directories=(gameLoop sqrt)
+directories=(gameLoop utils terrainGen game)
 
 # Check if the html directory exists
 if [ -d "$html_dir" ]; then
